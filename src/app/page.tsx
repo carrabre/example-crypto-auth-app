@@ -4,24 +4,48 @@ import Image from "next/image";
 import { ConnectButton } from "thirdweb/react";
 import thirdwebIcon from "@public/thirdweb.svg";
 import { client } from "./client";
+import { inAppWallet } from "thirdweb/wallets";
+
+const wallets = [
+  inAppWallet({
+    auth: {
+      options: [
+        "email",
+        "google",
+        "telegram",
+        "facebook",
+        "x",
+      ],
+    },
+  }),
+];
 
 export default function Home() {
   return (
-    <main className="p-4 pb-10 min-h-[100vh] flex items-center justify-center container max-w-screen-lg mx-auto">
-      <div className="py-20">
-        <Header />
+    <main className="min-h-[100vh] container max-w-screen-lg mx-auto">
+      {/* Navigation bar with sign in button */}
+      <nav className="p-4 flex justify-end">
+        <ConnectButton
+          connectModal={{ 
+            size: "wide",
+            centerModal: true 
+          }}
+          client={client}
+          wallets={wallets}
+          buttonText="Sign In"
+          appMetadata={{
+            name: "Example App",
+            url: "https://example.com",
+          }}
+        />
+      </nav>
 
-        <div className="flex justify-center mb-20">
-          <ConnectButton
-            client={client}
-            appMetadata={{
-              name: "Example App",
-              url: "https://example.com",
-            }}
-          />
+      {/* Main content */}
+      <div className="flex items-center justify-center">
+        <div className="py-20">
+          <Header />
+          <ThirdwebResources />
         </div>
-
-        <ThirdwebResources />
       </div>
     </main>
   );
@@ -30,28 +54,21 @@ export default function Home() {
 function Header() {
   return (
     <header className="flex flex-col items-center mb-20 md:mb-20">
-      <Image
+      {/* <Image
         src={thirdwebIcon}
         alt=""
         className="size-[150px] md:size-[150px]"
         style={{
           filter: "drop-shadow(0px 0px 24px #a726a9a8)",
         }}
-      />
+      /> */}
 
       <h1 className="text-2xl md:text-6xl font-semibold md:font-bold tracking-tighter mb-6 text-zinc-100">
-        thirdweb SDK
+        example auth
         <span className="text-zinc-300 inline-block mx-1"> + </span>
         <span className="inline-block -skew-x-6 text-blue-500"> Next.js </span>
       </h1>
 
-      <p className="text-zinc-300 text-base">
-        Read the{" "}
-        <code className="bg-zinc-800 text-zinc-300 px-2 rounded py-1 text-sm mx-1">
-          README.md
-        </code>{" "}
-        file to get started.
-      </p>
     </header>
   );
 }
@@ -60,21 +77,21 @@ function ThirdwebResources() {
   return (
     <div className="grid gap-4 lg:grid-cols-3 justify-center">
       <ArticleCard
-        title="thirdweb SDK Docs"
-        href="https://portal.thirdweb.com/typescript/v5"
-        description="thirdweb TypeScript SDK documentation"
+        title="Link 1"
+        href="https://openai.com"
+        description="example description"
       />
 
       <ArticleCard
-        title="Components and Hooks"
-        href="https://portal.thirdweb.com/typescript/v5/react"
-        description="Learn about the thirdweb React components and hooks in thirdweb SDK"
+        title="Link 2"
+        href="https://openai.com"
+        description="example description"
       />
 
       <ArticleCard
-        title="thirdweb Dashboard"
-        href="https://thirdweb.com/dashboard"
-        description="Deploy, configure, and manage your smart contracts from the dashboard."
+        title="Link 3"
+        href="https://google.com"
+        description="example description"
       />
     </div>
   );

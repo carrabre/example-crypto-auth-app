@@ -1,10 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { ConnectButton } from "thirdweb/react";
+import { ConnectButton, useConnect } from "thirdweb/react";
 import thirdwebIcon from "@public/thirdweb.svg";
 import { client } from "./client";
 import { inAppWallet } from "thirdweb/wallets";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { base } from "thirdweb/chains";
 
 const wallets = [
   inAppWallet({
@@ -21,6 +24,17 @@ const wallets = [
 ];
 
 export default function Home() {
+  const { status } = useConnect();
+  const router = useRouter();
+
+  console.log("Home status:", status); // Debug log
+
+  useEffect(() => {
+    if (status === "connected") {
+      router.push("/dashboard");
+    }
+  }, [status, router]);
+
   return (
     <main className="min-h-[100vh] container max-w-screen-lg mx-auto">
       {/* Navigation bar with sign in button */}
@@ -33,6 +47,8 @@ export default function Home() {
           client={client}
           wallets={wallets}
           buttonText="Sign In"
+          chain={base}
+          onConnect={() => router.push("/dashboard")}
           appMetadata={{
             name: "Example App",
             url: "https://example.com",

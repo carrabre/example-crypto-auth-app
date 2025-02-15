@@ -47,6 +47,8 @@ export default function Home() {
           client={client}
           wallets={wallets}
           buttonText="Sign In"
+          connectText="Sign In"
+          disconnectText="Sign Out"
           chain={base}
           onConnect={() => router.push("/dashboard")}
           appMetadata={{

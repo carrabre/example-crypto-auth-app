@@ -1,56 +1,53 @@
 "use client";
 
-import Image from "next/image";
-import { ConnectButton, useConnect } from "thirdweb/react";
-import thirdwebIcon from "@public/thirdweb.svg";
+import { ConnectButton, useActiveAccount, useConnect } from "thirdweb/react";
 import { client } from "./client";
 import { inAppWallet } from "thirdweb/wallets";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { base } from "thirdweb/chains";
 
 const wallets = [
   inAppWallet({
     auth: {
-      options: [
-        "email",
-        "google",
-        "telegram",
-        "facebook",
-        "x",
-      ],
+      options: ["google", "apple", "email"],
     },
   }),
 ];
 
 export default function Home() {
-  const { status } = useConnect();
+  const { isConnecting } = useConnect();
+  const account = useActiveAccount();
   const router = useRouter();
-
-  console.log("Home status:", status); // Debug log
+  const hasNavigatedRef = useRef(false);
 
   useEffect(() => {
-    if (status === "connected") {
-      router.push("/dashboard");
+    if (account && !hasNavigatedRef.current) {
+      hasNavigatedRef.current = true;
+      router.replace("/dashboard");
     }
-  }, [status, router]);
+  }, [account, router]);
 
   return (
     <main className="min-h-[100vh] container max-w-screen-lg mx-auto">
+      {/* Hidden prefetch link to warm the dashboard route */}
+      <Link href="/dashboard" prefetch className="hidden" aria-hidden="true">
+        Prefetch Dashboard
+      </Link>
+
       {/* Navigation bar with sign in button */}
       <nav className="p-4 flex justify-end">
         <ConnectButton
-          connectModal={{ 
-            size: "wide",
-            centerModal: true 
-          }}
           client={client}
           wallets={wallets}
-          buttonText="Sign In"
-          connectText="Sign In"
-          disconnectText="Sign Out"
           chain={base}
-          onConnect={() => router.push("/dashboard")}
+          onConnect={() => {
+            if (!hasNavigatedRef.current) {
+              hasNavigatedRef.current = true;
+              router.replace("/dashboard");
+            }
+          }}
           appMetadata={{
             name: "Example App",
             url: "https://example.com",
@@ -72,15 +69,6 @@ export default function Home() {
 function Header() {
   return (
     <header className="flex flex-col items-center mb-20 md:mb-20">
-      {/* <Image
-        src={thirdwebIcon}
-        alt=""
-        className="size-[150px] md:size-[150px]"
-        style={{
-          filter: "drop-shadow(0px 0px 24px #a726a9a8)",
-        }}
-      /> */}
-
       <h1 className="text-2xl md:text-6xl font-semibold md:font-bold tracking-tighter mb-6 text-zinc-100">
         example auth
         <span className="text-zinc-300 inline-block mx-1"> + </span>

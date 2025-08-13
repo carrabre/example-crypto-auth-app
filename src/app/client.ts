@@ -1,5 +1,4 @@
 import { createThirdwebClient } from "thirdweb";
-import { base } from "thirdweb/chains";
 
 // Replace this with your client ID string
 // refer to https://portal.thirdweb.com/typescript/v5/client on how to get a client ID
@@ -11,5 +10,4 @@ if (!clientId) {
 
 export const client = createThirdwebClient({
   clientId: clientId,
-  chain: base
 });

@@ -1,20 +1,20 @@
 "use client";
 
-import { ConnectButton, useConnect } from "thirdweb/react";
+import dynamic from "next/dynamic";
+import { useActiveAccount } from "thirdweb/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { client } from "../client";
 import { base } from "thirdweb/chains";
-import LoadingAnimation from "@/components/LoadingAnimation";
+
+const ConnectButton = dynamic(() => import("thirdweb/react").then(m => m.ConnectButton), { ssr: false });
+const LoadingAnimation = dynamic(() => import("@/components/LoadingAnimation"), { ssr: false });
 
 export default function Dashboard() {
-  const { status } = useConnect();
+  const account = useActiveAccount();
   const router = useRouter();
 
-  console.log("Current status:", status); // Debug log
-
-  // Show loading state while connecting
-  if (status === "connecting" || status === "unknown") {
+  // Show loading state while connecting/unknown
+  if (account === undefined) {
     return (
       <main className="min-h-[100vh] container max-w-screen-lg mx-auto">
         <div className="flex items-center justify-center h-[100vh]">
@@ -31,8 +31,8 @@ export default function Dashboard() {
   }
 
   // Immediately show home page if not connected
-  if (status === "disconnected") {
-    router.push("/");
+  if (account === null) {
+    router.replace("/");
     return null;
   }
 
@@ -45,18 +45,15 @@ export default function Dashboard() {
         </div>
         <ConnectButton 
           client={client}
-          buttonText="Sign In"
-          connectText="Sign In"
-          disconnectText="Sign Out"
           chain={base}
-          onDisconnect={() => router.push("/")}
+          onDisconnect={() => router.replace("/")}
         />
       </nav>
       
       <div className="flex items-center justify-center h-[80vh]">
         <div className="text-center space-y-6">
           <div className="bg-zinc-900/50 p-8 rounded-lg border border-zinc-800">
-            <h1 className="text-3xl font-bold mb-4">You're signed in! 🎉</h1>
+            <h1 className="text-3xl font-bold mb-4">You&apos;re signed in! 🎉</h1>
             <p className="text-zinc-400">Click your profile in the top right to sign out</p>
             <p className="mt-4 text-sm text-zinc-500">
               Connected to Base Network

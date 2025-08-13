@@ -18,6 +18,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="dns-prefetch" href="https://auth.thirdweb.com" />
+        <link rel="preconnect" href="https://auth.thirdweb.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://cdn.thirdweb.com" />
+        <link rel="preconnect" href="https://cdn.thirdweb.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://accounts.google.com" />
+        <link rel="preconnect" href="https://accounts.google.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://apis.google.com" />
+        <link rel="preconnect" href="https://apis.google.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://mainnet.base.org" />
+        <link rel="preconnect" href="https://mainnet.base.org" crossOrigin="anonymous" />
+        <link rel="prefetch" href="/dashboard" />
+      </head>
       <body className={inter.className}>
         <ThirdwebProvider>{children}</ThirdwebProvider>
       </body>

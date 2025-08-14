@@ -43,11 +43,13 @@ export default function Home() {
           wallets={wallets}
           chain={base}
           onConnect={() => {
+            try { window.localStorage.setItem("tw_last_wallet", "inapp"); } catch {}
             if (!hasNavigatedRef.current) {
               hasNavigatedRef.current = true;
               router.replace("/dashboard");
             }
           }}
+          onDisconnect={() => { try { window.localStorage.removeItem("tw_last_wallet"); } catch {} }}
           appMetadata={{
             name: "Example App",
             url: "https://example.com",

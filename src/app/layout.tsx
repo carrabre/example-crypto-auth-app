@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThirdwebProvider } from "thirdweb/react";
+import AutoConnect from "@/components/AutoConnect";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,7 +33,10 @@ export default function RootLayout({
         <link rel="prefetch" href="/dashboard" />
       </head>
       <body className={inter.className}>
-        <ThirdwebProvider>{children}</ThirdwebProvider>
+        <ThirdwebProvider>
+          <AutoConnect />
+          {children}
+        </ThirdwebProvider>
       </body>
     </html>
   );

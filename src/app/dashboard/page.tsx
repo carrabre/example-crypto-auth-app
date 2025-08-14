@@ -1,17 +1,40 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useActiveAccount } from "thirdweb/react";
+import { useActiveAccount, ConnectButton } from "thirdweb/react";
 import { useRouter } from "next/navigation";
 import { client } from "../client";
 import { base } from "thirdweb/chains";
+import { useEffect, useState } from "react";
 
-const ConnectButton = dynamic(() => import("thirdweb/react").then(m => m.ConnectButton), { ssr: false });
 const LoadingAnimation = dynamic(() => import("@/components/LoadingAnimation"), { ssr: false });
 
 export default function Dashboard() {
   const account = useActiveAccount();
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+  const [timedOut, setTimedOut] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (account === undefined) {
+      const id = setTimeout(() => setTimedOut(true), 4000);
+      return () => clearTimeout(id);
+    } else {
+      setTimedOut(false);
+    }
+  }, [account]);
+
+  if (!mounted) return null;
+
+  // If still unknown after timeout, send to home to retry connect
+  if (account === undefined && timedOut) {
+    router.replace("/");
+    return null;
+  }
 
   // Show loading state while connecting/unknown
   if (account === undefined) {
@@ -46,7 +69,8 @@ export default function Dashboard() {
         <ConnectButton 
           client={client}
           chain={base}
-          onDisconnect={() => router.replace("/")}
+          onConnect={() => { try { window.localStorage.setItem("tw_last_wallet", "inapp"); } catch {} }}
+          onDisconnect={() => { try { window.localStorage.removeItem("tw_last_wallet"); } catch {} ; router.replace("/"); }}
         />
       </nav>
       
